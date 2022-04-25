@@ -1,0 +1,56 @@
+name: Deploy Go Bot to Azure Web App
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '*'
+
+env:
+  WEBAPP_NAME: sample-net-app-kasun    # Azure Web App Name
+  WEBAPP_PACKAGE_PATH: 'dist/'      # Project Path Location default to root(.)
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      # Setup Go
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.18.0' # The Go version to download (if necessary) and use.
+      
+      # Install all the dependencies
+      - name: Install dependencies
+        run: |
+          go version
+          go get -u golang.org/x/lint/golint
+          
+      # Run build of the application
+      - name: Run build
+        run: go build -o ${{ env.WEBAPP_PACKAGE_PATH }} . 
+        
+      # Run vet & lint on the code
+      - name: Run vet & lint
+        run: |
+          go vet .
+          golint .
+      
+      # Run testing on the code
+      - name: Run testing
+        run: cd test && go test -v
+
+      - name: 'Run Azure webapp deploy action using publish profile credentials'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.WEBAPP_NAME }} 
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} 
+          package: '${{ env.WEBAPP_PACKAGE_PATH }}'
