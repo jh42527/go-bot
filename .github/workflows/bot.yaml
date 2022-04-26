@@ -1,7 +1,7 @@
 name: Deploy Go Bot to Azure Web App
 
 env:
-  WEBAPP_NAME: sample-net-app-kasun    # Azure Web App Name
+  WEBAPP_NAME: GoBotCentral    # Azure Web App Name
   WEBAPP_PACKAGE_PATH: 'dist/'      # Project Path Location default to root(.)
 
 on:
@@ -17,6 +17,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    environment: development
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -43,6 +44,7 @@ jobs:
       - name: Run testing
         run: go test -v
 
+      # Deploy to Azure
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
         with: 
