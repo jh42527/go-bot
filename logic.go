@@ -111,7 +111,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// TODO: Step 3 - Don't collide with others.
-	snakes := state.Board.Snakes
+	// snakes := state.Board.Snakes
 
 	// for _, snake := range snakes {
 	// 	snake.ID =
