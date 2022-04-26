@@ -86,25 +86,27 @@ func move(state GameState) BattlesnakeMoveResponse {
 	// TODO: Step 2 - Don't hit yourself.
 	mybody := state.You.Body
 
-	for _, bodySegment := range mybody {
-		// avoid body left
-		if myHead.X+1 == bodySegment.X {
-			possibleMoves["right"] = false
-		}
+	for index, bodySegment := range mybody {
+		if index != 1 {
+			// avoid body left
+			if myHead.X+1 == bodySegment.X {
+				possibleMoves["right"] = false
+			}
 
-		// avoid body right
-		if myHead.X-1 == bodySegment.X {
-			possibleMoves["left"] = false
-		}
+			// avoid body right
+			if myHead.X-1 == bodySegment.X {
+				possibleMoves["left"] = false
+			}
 
-		// avoid body below
-		if myHead.Y+1 == bodySegment.Y {
-			possibleMoves["up"] = false
-		}
+			// avoid body below
+			if myHead.Y+1 == bodySegment.Y {
+				possibleMoves["up"] = false
+			}
 
-		// avoid body above
-		if myHead.Y-1 == bodySegment.Y {
-			possibleMoves["down"] = false
+			// avoid body above
+			if myHead.Y-1 == bodySegment.Y {
+				possibleMoves["down"] = false
+			}
 		}
 	}
 
