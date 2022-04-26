@@ -63,22 +63,24 @@ func move(state GameState) BattlesnakeMoveResponse {
 	boardWidth := state.Board.Width
 	boardHeight := state.Board.Height
 
-	if myHead.X == 0 && myHead.Y == 0 {
-		// hit bottom left
+	// avoid left wall
+	if myHead.X == 0 {
 		possibleMoves["left"] = false
-		possibleMoves["down"] = false
-	} else if myHead.X == boardWidth && myHead.Y == 0 {
-		// hit bottom right
+	}
+
+	// avoid right wall
+	if myHead.X == boardWidth {
 		possibleMoves["right"] = false
+	}
+
+	// avoid top wall
+	if myHead.Y == boardHeight {
+		possibleMoves["up"] = false
+	}
+
+	// avoid bottom wall
+	if myHead.Y == boardHeight {
 		possibleMoves["down"] = false
-	} else if myHead.X == 0 && myHead.Y == boardHeight {
-		// hit top left
-		possibleMoves["left"] = false
-		possibleMoves["up"] = false
-	} else if myHead.X == boardWidth && myHead.Y == boardHeight {
-		// hit top right
-		possibleMoves["right"] = false
-		possibleMoves["up"] = false
 	}
 
 	// TODO: Step 2 - Don't hit yourself.
