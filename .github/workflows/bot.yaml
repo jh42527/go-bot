@@ -38,16 +38,10 @@ jobs:
       # Run build of the application
       - name: Run build
         run: go build -o ${{ env.WEBAPP_PACKAGE_PATH }} . 
-        
-      # Run vet & lint on the code
-      - name: Run vet & lint
-        run: |
-          go vet .
-          golint .
       
       # Run testing on the code
       - name: Run testing
-        run: cd test && go test -v
+        run: go test -v
 
       - name: 'Run Azure webapp deploy action using publish profile credentials'
         uses: azure/webapps-deploy@v2
