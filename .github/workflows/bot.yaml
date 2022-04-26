@@ -1,16 +1,17 @@
 name: Deploy Go Bot to Azure Web App
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - '*'
-
 env:
   WEBAPP_NAME: sample-net-app-kasun    # Azure Web App Name
   WEBAPP_PACKAGE_PATH: 'dist/'      # Project Path Location default to root(.)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch:
 
 jobs:
   build:
