@@ -17,7 +17,7 @@ func info() BattlesnakeInfoResponse {
 		Author:     "Jon Hammond",
 		Color:      "#00c2d4",
 		Head:       "all-seeing",
-		Tail:       "curled",
+		Tail:       "hook",
 	}
 }
 
