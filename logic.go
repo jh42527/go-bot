@@ -87,25 +87,29 @@ func move(state GameState) BattlesnakeMoveResponse {
 	mybody := state.You.Body
 
 	for index, bodySegment := range mybody {
+		// ignore head
 		if index != 0 {
-			// avoid body left
-			if myHead.X+1 == bodySegment.X {
-				possibleMoves["right"] = false
-			}
+			// check body part is adjacent to head
+			if (myHead.X > bodySegment.X) || (myHead.X < bodySegment.X) && (myHead.Y > bodySegment.Y) || (myHead.Y < bodySegment.Y) {
+				// avoid body left
+				if myHead.X+1 == bodySegment.X {
+					possibleMoves["right"] = false
+				}
 
-			// avoid body right
-			if myHead.X-1 == bodySegment.X {
-				possibleMoves["left"] = false
-			}
+				// avoid body right
+				if myHead.X-1 == bodySegment.X {
+					possibleMoves["left"] = false
+				}
 
-			// avoid body below
-			if myHead.Y+1 == bodySegment.Y {
-				possibleMoves["up"] = false
-			}
+				// avoid body below
+				if myHead.Y+1 == bodySegment.Y {
+					possibleMoves["up"] = false
+				}
 
-			// avoid body above
-			if myHead.Y-1 == bodySegment.Y {
-				possibleMoves["down"] = false
+				// avoid body above
+				if myHead.Y-1 == bodySegment.Y {
+					possibleMoves["down"] = false
+				}
 			}
 		}
 	}
