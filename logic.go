@@ -69,7 +69,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// avoid right wall
-	if myHead.X == boardWidth {
+	if myHead.X == boardWidth-1 {
 		possibleMoves["right"] = false
 	}
 
@@ -79,7 +79,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// avoid top wall
-	if myHead.Y == boardHeight {
+	if myHead.Y == boardHeight-1 {
 		possibleMoves["up"] = false
 	}
 
