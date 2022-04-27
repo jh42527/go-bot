@@ -89,27 +89,24 @@ func move(state GameState) BattlesnakeMoveResponse {
 	for index, bodySegment := range mybody {
 		// ignore head
 		if index != 0 {
-			// check body part is adjacent to head
-			if (myHead.X > bodySegment.X) || (myHead.X < bodySegment.X) && (myHead.Y > bodySegment.Y) || (myHead.Y < bodySegment.Y) {
-				// avoid body left
-				if myHead.X+1 == bodySegment.X {
-					possibleMoves["right"] = false
-				}
+			// avoid body right
+			if myHead.X+1 == bodySegment.X {
+				possibleMoves["right"] = false
+			}
 
-				// avoid body right
-				if myHead.X-1 == bodySegment.X {
-					possibleMoves["left"] = false
-				}
+			// avoid body left
+			if myHead.X-1 == bodySegment.X {
+				possibleMoves["left"] = false
+			}
 
-				// avoid body below
-				if myHead.Y+1 == bodySegment.Y {
-					possibleMoves["up"] = false
-				}
+			// avoid body up
+			if myHead.Y+1 == bodySegment.Y {
+				possibleMoves["up"] = false
+			}
 
-				// avoid body above
-				if myHead.Y-1 == bodySegment.Y {
-					possibleMoves["down"] = false
-				}
+			// avoid body down
+			if myHead.Y-1 == bodySegment.Y {
+				possibleMoves["down"] = false
 			}
 		}
 	}
@@ -167,4 +164,16 @@ func move(state GameState) BattlesnakeMoveResponse {
 	return BattlesnakeMoveResponse{
 		Move: nextMove,
 	}
+}
+
+func isNeighbour(origin Coord, point Coord) bool {
+	for dy := -1; dy <= 1; dy++ {
+		for dx := -1; dx <= 1; dx++ {
+			if origin.Y+dy == point.Y && origin.X+dx == point.X {
+				return true
+			}
+		}
+	}
+
+	return false
 }
