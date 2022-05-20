@@ -60,8 +60,8 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// TODO: Step 1 - Don't hit walls.
-	boardWidth := state.Board.Width
-	boardHeight := state.Board.Height
+	boardMaxWidthIndex := state.Board.Width - 1
+	boardMaxHeightIndex := state.Board.Height - 1
 
 	// avoid left wall
 	if myHead.X == 0 {
@@ -69,7 +69,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// avoid right wall
-	if myHead.X == boardWidth-1 {
+	if myHead.X == boardMaxWidthIndex {
 		possibleMoves["right"] = false
 	}
 
@@ -79,7 +79,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// avoid top wall
-	if myHead.Y == boardHeight-1 {
+	if myHead.Y == boardMaxHeightIndex {
 		possibleMoves["up"] = false
 	}
 
@@ -90,22 +90,22 @@ func move(state GameState) BattlesnakeMoveResponse {
 		// ignore head
 		if index != len(mybody)-1 {
 			// avoid body right
-			if myHead.X+1 == bodySegment.X {
+			if myHead.X+1 == bodySegment.X && myHead.Y == bodySegment.Y {
 				possibleMoves["right"] = false
 			}
 
 			// avoid body left
-			if myHead.X-1 == bodySegment.X {
+			if myHead.X-1 == bodySegment.X && myHead.Y == bodySegment.Y {
 				possibleMoves["left"] = false
 			}
 
 			// avoid body up
-			if myHead.Y+1 == bodySegment.Y {
+			if myHead.Y+1 == bodySegment.Y && myHead.X == bodySegment.X {
 				possibleMoves["up"] = false
 			}
 
 			// avoid body down
-			if myHead.Y-1 == bodySegment.Y {
+			if myHead.Y-1 == bodySegment.Y && myHead.X == bodySegment.X {
 				possibleMoves["down"] = false
 			}
 		}
