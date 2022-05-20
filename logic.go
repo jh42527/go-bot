@@ -144,7 +144,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	// Finally, choose a move from the available safe moves.
 	// TODO: Step 5 - Select a move to make based on strategy, rather than random.
 	var nextMove string
-	var shout string
+	shout := "Test"
 
 	safeMoves := []string{}
 	for move, isSafe := range possibleMoves {
