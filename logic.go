@@ -112,32 +112,31 @@ func move(state GameState) BattlesnakeMoveResponse {
 	}
 
 	// TODO: Step 3 - Don't collide with others.
-	// snakes := state.Board.Snakes
+	snakes := state.Board.Snakes
 
-	// for _, snake := range snakes {
-	// 	snake.ID =
-	// 	for _, snakeSegment := range snake.Body {
-	// 		// avoid snake left
-	// 		if myHead.X == snakeSegment.X+1 {
-	// 			possibleMoves["right"] = false
-	// 		}
+	for _, snake := range snakes {
+		for _, snakeSegment := range snake.Body {
+			// avoid snake left
+			if myHead.X == snakeSegment.X+1 && myHead.Y == snakeSegment.Y {
+				possibleMoves["right"] = false
+			}
 
-	// 		// avoid snake right
-	// 		if myHead.X == snakeSegment.X-1 {
-	// 			possibleMoves["left"] = false
-	// 		}
+			// avoid snake right
+			if myHead.X == snakeSegment.X-1 && myHead.Y == snakeSegment.Y {
+				possibleMoves["left"] = false
+			}
 
-	// 		// avoid snake below
-	// 		if myHead.Y == snakeSegment.Y+1 {
-	// 			possibleMoves["up"] = false
-	// 		}
+			// avoid snake below
+			if myHead.Y == snakeSegment.Y+1 && myHead.X == snakeSegment.X {
+				possibleMoves["up"] = false
+			}
 
-	// 		// avoid snake above
-	// 		if myHead.Y == snakeSegment.Y-1 {
-	// 			possibleMoves["down"] = false
-	// 		}
-	// 	}
-	// }
+			// avoid snake above
+			if myHead.Y == snakeSegment.Y-1 && myHead.X == snakeSegment.X {
+				possibleMoves["down"] = false
+			}
+		}
+	}
 
 	// TODO: Step 4 - Find food.
 	// Use information in GameState to seek out and find food.
@@ -145,6 +144,7 @@ func move(state GameState) BattlesnakeMoveResponse {
 	// Finally, choose a move from the available safe moves.
 	// TODO: Step 5 - Select a move to make based on strategy, rather than random.
 	var nextMove string
+	var shout string
 
 	safeMoves := []string{}
 	for move, isSafe := range possibleMoves {
@@ -155,15 +155,23 @@ func move(state GameState) BattlesnakeMoveResponse {
 
 	if len(safeMoves) == 0 {
 		nextMove = "down"
-		log.Printf("%s MOVE %d: No safe moves detected! Moving %s\n", state.Game.ID, state.Turn, nextMove)
+
+		shout = "A MERE FLESH WOUND"
 	} else {
 		nextMove = safeMoves[rand.Intn(len(safeMoves))]
+
 		log.Printf("%s MOVE %d: %s\n", state.Game.ID, state.Turn, nextMove)
 	}
 
-	return BattlesnakeMoveResponse{
-		Move: nextMove,
+	var battlesnakeMoveResponse BattlesnakeMoveResponse
+
+	battlesnakeMoveResponse.Move = nextMove
+
+	if len(shout) > 0 {
+		battlesnakeMoveResponse.Shout = shout
 	}
+
+	return battlesnakeMoveResponse
 }
 
 func isNeighbour(origin Coord, point Coord) bool {
