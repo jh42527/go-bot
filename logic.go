@@ -102,9 +102,11 @@ func checkForCollision(coord Coord, state GameState) bool {
 	}
 
 	// avoid body
-	for _, bodySegment := range myBody {
-		if coord.X == bodySegment.X && coord.Y == bodySegment.Y {
-			return false
+	for index, bodySegment := range myBody {
+		if index != len(myBody)-1 {
+			if coord.X == bodySegment.X && coord.Y == bodySegment.Y {
+				return false
+			}
 		}
 	}
 
