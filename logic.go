@@ -42,26 +42,26 @@ func move(state GameState) BattlesnakeMoveResponse {
 	possibleMoves := map[string]PossibleMove{
 		"up": {
 			Coord: Coord{
-				X: myHead.X + 1,
-				Y: myHead.Y,
+				X: myHead.X,
+				Y: myHead.Y + 1,
 			},
 		},
 		"down": {
-			Coord: Coord{
-				X: myHead.X - 1,
-				Y: myHead.Y,
-			},
-		},
-		"left": {
 			Coord: Coord{
 				X: myHead.X,
 				Y: myHead.Y - 1,
 			},
 		},
+		"left": {
+			Coord: Coord{
+				X: myHead.X - 1,
+				Y: myHead.Y,
+			},
+		},
 		"right": {
 			Coord: Coord{
-				X: myHead.X,
-				Y: myHead.Y + 1,
+				X: myHead.X + 1,
+				Y: myHead.Y,
 			},
 		},
 	}
