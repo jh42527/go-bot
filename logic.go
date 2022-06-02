@@ -11,7 +11,6 @@ import (
 // For customization options, see https://docs.battlesnake.com/references/personalization
 // TIP: If you open your Battlesnake URL in browser you should see this data.
 func info() BattlesnakeInfoResponse {
-	log.Println("INFO")
 	return BattlesnakeInfoResponse{
 		APIVersion: "1",
 		Author:     "Jon Hammond",
@@ -38,150 +37,87 @@ func end(state GameState) {
 // where to move -- valid moves are "up", "down", "left", or "right".
 // We've provided some code and comments to get you started.
 func move(state GameState) BattlesnakeMoveResponse {
-	possibleMoves := map[string]bool{
-		"up":    true,
-		"down":  true,
-		"left":  true,
-		"right": true,
+	myHead := state.You.Body[0]
+
+	possibleMoves := map[string]PossibleMove{
+		"up": {
+			Safe: checkForCollision(myHead, state),
+			Coord: Coord{
+				X: myHead.X + 1,
+				Y: myHead.Y,
+			},
+		},
+		"down": {
+			Safe: checkForCollision(myHead, state),
+			Coord: Coord{
+				X: myHead.X - 1,
+				Y: myHead.Y,
+			},
+		},
+		"left": {
+			Safe: checkForCollision(myHead, state),
+			Coord: Coord{
+				X: myHead.X,
+				Y: myHead.Y - 1,
+			},
+		},
+		"right": {
+			Safe: checkForCollision(myHead, state),
+			Coord: Coord{
+				X: myHead.X,
+				Y: myHead.Y + 1,
+			},
+		},
 	}
 
-	// Step 0: Don't let your Battlesnake move back in on it's own neck
-	myHead := state.You.Body[0] // Coordinates of your head
-	myNeck := state.You.Body[1] // Coordinates of body piece directly behind your head (your "neck")
-
-	if myNeck.X < myHead.X {
-		possibleMoves["left"] = false
-	} else if myNeck.X > myHead.X {
-		possibleMoves["right"] = false
-	} else if myNeck.Y < myHead.Y {
-		possibleMoves["down"] = false
-	} else if myNeck.Y > myHead.Y {
-		possibleMoves["up"] = false
-	}
-
-	// TODO: Step 1 - Don't hit walls.
-	boardMaxWidthIndex := state.Board.Width - 1
-	boardMaxHeightIndex := state.Board.Height - 1
-
-	// avoid left wall
-	if myHead.X == 0 {
-		possibleMoves["left"] = false
-	}
-
-	// avoid right wall
-	if myHead.X == boardMaxWidthIndex {
-		possibleMoves["right"] = false
-	}
-
-	// avoid bottom wall
-	if myHead.Y == 0 {
-		possibleMoves["down"] = false
-	}
-
-	// avoid top wall
-	if myHead.Y == boardMaxHeightIndex {
-		possibleMoves["up"] = false
-	}
-
-	// TODO: Step 2 - Don't hit yourself.
-	mybody := state.You.Body
-
-	for index, bodySegment := range mybody {
-		// ignore head
-		if index != len(mybody)-1 {
-			// avoid body right
-			if myHead.X+1 == bodySegment.X && myHead.Y == bodySegment.Y {
-				possibleMoves["right"] = false
-			}
-
-			// avoid body left
-			if myHead.X-1 == bodySegment.X && myHead.Y == bodySegment.Y {
-				possibleMoves["left"] = false
-			}
-
-			// avoid body up
-			if myHead.Y+1 == bodySegment.Y && myHead.X == bodySegment.X {
-				possibleMoves["up"] = false
-			}
-
-			// avoid body down
-			if myHead.Y-1 == bodySegment.Y && myHead.X == bodySegment.X {
-				possibleMoves["down"] = false
-			}
-		}
-	}
-
-	// TODO: Step 3 - Don't collide with others.
-	snakes := state.Board.Snakes
-
-	for _, snake := range snakes {
-		for _, snakeSegment := range snake.Body {
-			// avoid snake left
-			if myHead.X+1 == snakeSegment.X && myHead.Y == snakeSegment.Y {
-				possibleMoves["right"] = false
-			}
-
-			// avoid snake right
-			if myHead.X-1 == snakeSegment.X && myHead.Y == snakeSegment.Y {
-				possibleMoves["left"] = false
-			}
-
-			// avoid snake below
-			if myHead.Y+1 == snakeSegment.Y && myHead.X == snakeSegment.X {
-				possibleMoves["up"] = false
-			}
-
-			// avoid snake above
-			if myHead.Y-1 == snakeSegment.Y && myHead.X == snakeSegment.X {
-				possibleMoves["down"] = false
-			}
-		}
-	}
-
-	// TODO: Step 4 - Find food.
-	// Use information in GameState to seek out and find food.
-
-	// Finally, choose a move from the available safe moves.
-	// TODO: Step 5 - Select a move to make based on strategy, rather than random.
+	// choose a move from the available safe moves.
 	var nextMove string
-	shout := "Test"
 
 	safeMoves := []string{}
-	for move, isSafe := range possibleMoves {
-		if isSafe {
+	for move, possibleMove := range possibleMoves {
+		if possibleMove.Safe {
 			safeMoves = append(safeMoves, move)
 		}
 	}
 
 	if len(safeMoves) == 0 {
 		nextMove = "down"
-
-		shout = "A MERE FLESH WOUND"
 	} else {
 		nextMove = safeMoves[rand.Intn(len(safeMoves))]
-
-		log.Printf("%s MOVE %d: %s\n", state.Game.ID, state.Turn, nextMove)
 	}
 
 	var battlesnakeMoveResponse BattlesnakeMoveResponse
 
 	battlesnakeMoveResponse.Move = nextMove
 
-	if len(shout) > 0 {
-		battlesnakeMoveResponse.Shout = shout
-	}
-
 	return battlesnakeMoveResponse
 }
 
-func isNeighbour(origin Coord, point Coord) bool {
-	for dy := -1; dy <= 1; dy++ {
-		for dx := -1; dx <= 1; dx++ {
-			if origin.Y+dy == point.Y && origin.X+dx == point.X {
-				return true
+func checkForCollision(coord Coord, state GameState) bool {
+	myBody := state.You.Body
+	boardMaxWidthIndex := state.Board.Width - 1
+	boardMaxHeightIndex := state.Board.Height - 1
+
+	// avoid left wall
+	if coord.X == -1 || coord.X > boardMaxWidthIndex || coord.Y == -1 || coord.Y > boardMaxHeightIndex {
+		return false
+	}
+
+	// avoid body
+	for _, bodySegment := range myBody {
+		if coord.X == bodySegment.X && coord.Y == bodySegment.Y {
+			return false
+		}
+	}
+
+	// avoid snakes
+	for _, snake := range state.Board.Snakes {
+		for _, snakeSegment := range snake.Body {
+			if coord.X == snakeSegment.X && coord.Y == snakeSegment.Y {
+				return false
 			}
 		}
 	}
 
-	return false
+	return true
 }

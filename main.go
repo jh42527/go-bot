@@ -76,6 +76,15 @@ type Coord struct {
 	Y int `json:"y"`
 }
 
+// Game Logic
+
+type PossibleMove struct {
+	Safe             bool
+	Coord            Coord
+	DistanceFromFood float64
+	DistanceFromEdge float64
+}
+
 // Response Structs
 
 type BattlesnakeInfoResponse struct {
