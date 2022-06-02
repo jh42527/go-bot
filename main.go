@@ -79,7 +79,6 @@ type Coord struct {
 // Game Logic
 
 type PossibleMove struct {
-	Safe             bool
 	Coord            Coord
 	DistanceFromFood float64
 	DistanceFromEdge float64

@@ -41,28 +41,24 @@ func move(state GameState) BattlesnakeMoveResponse {
 
 	possibleMoves := map[string]PossibleMove{
 		"up": {
-			Safe: checkForCollision(myHead, state),
 			Coord: Coord{
 				X: myHead.X + 1,
 				Y: myHead.Y,
 			},
 		},
 		"down": {
-			Safe: checkForCollision(myHead, state),
 			Coord: Coord{
 				X: myHead.X - 1,
 				Y: myHead.Y,
 			},
 		},
 		"left": {
-			Safe: checkForCollision(myHead, state),
 			Coord: Coord{
 				X: myHead.X,
 				Y: myHead.Y - 1,
 			},
 		},
 		"right": {
-			Safe: checkForCollision(myHead, state),
 			Coord: Coord{
 				X: myHead.X,
 				Y: myHead.Y + 1,
@@ -70,15 +66,17 @@ func move(state GameState) BattlesnakeMoveResponse {
 		},
 	}
 
-	// choose a move from the available safe moves.
-	var nextMove string
-
+	// determine safe moves (no collision)
 	safeMoves := []string{}
+
 	for move, possibleMove := range possibleMoves {
-		if possibleMove.Safe {
+		if checkForCollision(possibleMove.Coord, state) {
 			safeMoves = append(safeMoves, move)
 		}
 	}
+
+	// choose a move from the available safe moves.
+	var nextMove string
 
 	if len(safeMoves) == 0 {
 		nextMove = "down"
